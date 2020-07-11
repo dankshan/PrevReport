@@ -62,7 +62,7 @@ svy_2001 <-
          attemptSuicide = 0)
 
 demographics <-
-  read_rds("home/shiny/data/demographics.rds") %>%
+  read_rds("/home/shiny/data/demographics.rds") %>%
   mutate(Decile = fct_relevel(as.factor(Decile),
                               "1","2","3","4","5","6","7","8","9","10","99"),
          
