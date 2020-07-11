@@ -284,6 +284,7 @@
 
 multi_year <- function(df_table, variable_table, groups_table, title, filterGroup = NA, filterVal = NA, password = NULL, html_output = TRUE){
   
+  if(password == "@$@#%Youth") {
   
   tabSubtitle <-
     paste0(
@@ -424,6 +425,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, filterGrou
   } else if(html_output == FALSE) {
     output %>%
       select(var, groupType2, group2, everything())
+  }
   }
 }
 
