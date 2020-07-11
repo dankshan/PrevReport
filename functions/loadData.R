@@ -1,6 +1,6 @@
-load_survey <- function(path){
+load_survey <- function(df){
   
-  df <- read_rds(path) %>%
+  df %>%
     mutate(Ethnicity = fct_relevel(as.factor(case_when(ethnic_p5 == "Maori" ~ "Maori",
                                                        ethnic_p5 == "Pacific" ~ "Pacific",
                                                        ethnic_p5 == "Asian" ~ "Asian",
@@ -45,25 +45,16 @@ load_survey <- function(path){
   
 }
 
+svy_2019_kura <- load_survey(cyphr::decrypt(readRDS("/home/shiny/data/youth2019_national_calibrated_incl_wharekura.rds"), cyphr::data_key("/home/shiny/data")))
 
-svy_2019_kura <- load_survey(path = 
-                               cyphr::decrypt(readRDS("/home/shiny/data/youth2019_national_calibrated_incl_wharekura.rds"),
-                                              cyphr::data_key("/home/shiny/data")))
-svy_2019 <- load_survey(path = 
-                          cyphr::decrypt(readRDS("/home/shiny/youth2019_national_calibrated_no_wharekura.rds"),
-                                         cyphr::data_key("/home/shiny/data")))
+svy_2019 <- load_survey(cyphr::decrypt(readRDS("/home/shiny/data/youth2019_national_calibrated_no_wharekura.rds"), cyphr::data_key("/home/shiny/data")))
 
-svy_2012 <- load_survey(path = 
-                          cyphr::decrypt(readRDS("/home/shiny/data/youth2012_national_calibrated_no_wharekura.rds"),
-                                         cyphr::data_key("/home/shiny/data")))
+svy_2012 <- load_survey(cyphr::decrypt(readRDS("/home/shiny/data/youth2012_national_calibrated_no_wharekura.rds"), cyphr::data_key("/home/shiny/data")))
 
-svy_2007 <- load_survey(path = 
-                          cyphr::decrypt(readRDS("/home/shiny/data/youth2007_national_calibrated_no_wharekura.rds"),
-                                         cyphr::data_key("/home/shiny/data")))
+svy_2007 <- load_survey(cyphr::decrypt(readRDS("/home/shiny/data/youth2007_national_calibrated_no_wharekura.rds"), cyphr::data_key("/home/shiny/data")))
 
-svy_2001 <- load_survey(path = 
-                          cyphr::decrypt(readRDS("/home/shiny/data/youth2001_national_calibrated_no_wharekura.rds.rds"),
-                                         cyphr::data_key("/home/shiny/data")))
+svy_2001 <- load_survey(cyphr::decrypt(readRDS("/home/shiny/data/youth2001_national_calibrated_no_wharekura.rds"), cyphr::data_key("/home/shiny/data")))
+
 
 svy_2001 <-
   svy_2001 %>%
@@ -71,7 +62,7 @@ svy_2001 <-
          attemptSuicide = 0)
 
 demographics <-
-  read_rds("./data/demographics.rds") %>%
+  read_rds("home/shiny/data/demographics.rds") %>%
   mutate(Decile = fct_relevel(as.factor(Decile),
                               "1","2","3","4","5","6","7","8","9","10","99"),
          
