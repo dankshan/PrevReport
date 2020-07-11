@@ -6,9 +6,9 @@ library(srvyr)
 library(readxl)
 library(gt)
 
-variables <- na.omit(read_excel("./data/outputVariables.xlsx", sheet = "variables"))
+variables <- na.omit(read_excel("/home/shiny/data/outputVariables.xlsx", sheet = "variables"))
 
-timeSeries <- na.omit(read_excel("./data/outputVariables.xlsx", sheet = "timeSeries"))
+timeSeries <- na.omit(read_excel("/home/shiny/data/outputVariables.xlsx", sheet = "timeSeries"))
 
 
 source("./functions/loadData.R")
