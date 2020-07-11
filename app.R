@@ -359,11 +359,9 @@ server <- function(input, output) {
         },
         content = function(file) {
             write.csv(single_year(df = svy_2019_kura,
-                                  variable_table = variable_table() %>%
-                                      select(var, val, varname),
+                                  variable_table = variable_table(),
                                   groups_table = input$groups,
-                                  title = variable_table() %>%
-                                      select(title) %>% distinct(),
+                                  title = variable_title(),
                                   filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
                                   filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
                                   password = input$Password,
@@ -372,24 +370,6 @@ server <- function(input, output) {
         }
     )
     
-    
-    
-    
-    # output$prevalenceTable <- 
-    #     render_gt(
-    #         expr = single_year(df = svy_2019_kura,
-    #                            variable_table = variables %>%
-    #                                filter(mainSection == input$topics, subSection == input$tables) %>%
-    #                                select(var, val, varname),
-    #                            groups_table = input$groups,
-    #                            title = variables %>%
-    #                                filter(mainSection == input$topics, subSection == input$tables) %>%
-    #                                select(title) %>%
-    #                                distinct(),
-    #                            filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
-    #                            filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
-    #                            password = input$Password)
-    #     )
 
     output$timeSeries <-
         render_gt(
