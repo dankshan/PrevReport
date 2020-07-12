@@ -1,5 +1,5 @@
-# data_path <- "/home/shiny/data/"
-data_path <- "./data/"
+data_path <- "/home/shiny/data/"
+# data_path <- "./data/"
 
 variables <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "variables"))
 

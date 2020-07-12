@@ -6,10 +6,6 @@ library(srvyr)
 library(readxl)
 library(gt)
 
-variables <- na.omit(read_excel("/home/shiny/data/outputVariables.xlsx", sheet = "variables"))
-
-timeSeries <- na.omit(read_excel("/home/shiny/data/outputVariables.xlsx", sheet = "timeSeries"))
-
 
 source("./functions/loadData.R")
 source("./functions/single_year.R")
@@ -342,20 +338,19 @@ server <- function(input, output) {
         render_gt({
             
             single_year(df = svy_2019_kura,
-                               variable_table = variable_table(),
-                               groups_table = input$groups,
-                               title = variable_title(),
-                               filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
-                               filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
-                               password = input$Password)
+                        variable_table = variable_table(),
+                        groups_table = input$groups,
+                        title = variable_title(),
+                        filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
+                        filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
+                        password = input$Password)
         })
     
     
     
     output$downloadData <- downloadHandler(
         filename = function() {
-            paste0(variable_table() %>%
-                       select(title) %>% distinct(),"_ethnicity_",input$ethnicity,".csv")
+            paste0(variable_title(),"_ethnicity_",input$ethnicity,".csv")
         },
         content = function(file) {
             write.csv(single_year(df = svy_2019_kura,
