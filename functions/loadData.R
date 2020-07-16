@@ -1,5 +1,4 @@
-data_path <- "/home/shiny/data/"
-# data_path <- "./data/"
+data_path <- "./data/"
 
 variables <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "variables"))
 
@@ -66,26 +65,13 @@ svy_2001 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_nati
 
 
 
-##local
-
-# svy_2019_kura <- load_survey(readRDS(paste0(data_path, "youth2019_national_calibrated_incl_wharekura.rds")))
-# 
-# svy_2019 <- load_survey(readRDS(paste0(data_path, "youth2019_national_calibrated_no_wharekura.rds")))
-# 
-# svy_2012 <- load_survey(readRDS(paste0(data_path, "youth2012_national_calibrated_no_wharekura.rds")))
-# 
-# svy_2007 <- load_survey(readRDS(paste0(data_path, "youth2007_national_calibrated_no_wharekura.rds")))
-# 
-# svy_2001 <- load_survey(readRDS(paste0(data_path, "youth2001_national_calibrated_no_wharekura.rds")))
-
-
 svy_2001 <-
   svy_2001 %>%
   mutate(wellbeing = 0,
          attemptSuicide = 0)
 
 demographics <-
-  read_rds(paste0(data_path, "demographics.rds")) %>%
+  cyphr::decrypt(readRDS(paste0(data_path, "demographics.rds")), cyphr::data_key(data_path)) %>%
   mutate(Decile = fct_relevel(as.factor(Decile),
                               "1","2","3","4","5","6","7","8","9","10","99"),
          

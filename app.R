@@ -5,6 +5,7 @@ library(tidyverse)
 library(srvyr)
 library(readxl)
 library(gt)
+library(cyphr)
 
 
 source("./functions/loadData.R")
