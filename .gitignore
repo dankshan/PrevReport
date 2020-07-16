@@ -6,3 +6,4 @@ global.R
 *.rds
 *.csv
 .httr-oauth
+encryption_setup.R
