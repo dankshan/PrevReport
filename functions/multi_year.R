@@ -4,6 +4,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, filterGrou
   
   tabSubtitle <-
     paste0(
+      variable_table %>% select(varname) %>% distinct(),
       if(!is.na(filterGroup)){paste0("Filtered for ", filterVal, " ethnicity. \n")} else {NULL}
     )
   
