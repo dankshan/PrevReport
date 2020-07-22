@@ -7,3 +7,4 @@ global.R
 *.csv
 .httr-oauth
 encryption_setup.R
+things_to_do.Rmd
