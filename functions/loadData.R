@@ -4,6 +4,8 @@ variables <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet
 
 timeSeries <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "timeSeries"))
 
+saved_password <- cyphr::decrypt(readRDS(paste0(data_path, "password.rds")), cyphr::data_key(data_path))
+
 load_survey <- function(df){
   
   df %>%
@@ -68,7 +70,17 @@ svy_2001 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_nati
 svy_2001 <-
   svy_2001 %>%
   mutate(wellbeing = 0,
-         attemptSuicide = 0)
+         attemptSuicide = 0,
+         familyMeals = 0,
+         usedGP = 0,
+         schClinic = 0,
+         afterHours = 0,
+         ythHltCen = 0,
+         confident = 0,
+         private = 0,
+         unableHC = 0)
+
+
 
 demographics <-
   cyphr::decrypt(readRDS(paste0(data_path, "demographics.rds")), cyphr::data_key(data_path)) %>%
