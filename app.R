@@ -14,7 +14,7 @@ source("./functions/multi_year.R")
 # source("./functions/prevGraph1.R")
 source("./functions/demographics.R")
 
-ui <- 
+ui <-
     
     navbarPage(
         
@@ -30,7 +30,7 @@ ui <-
         
         tabPanel("Prevalence",
                  
-                 # Sidebar with a slider input for number of bins 
+                 # Sidebar with a slider input for number of bins
                  sidebarLayout(
                      sidebarPanel(
                          
@@ -128,7 +128,13 @@ ui <-
                                                     # "Deprivation",
                                                     # "Urban_Rural"
                                      ),
-                                     selected = list("Total", "Age", "Sex", "Ethnicity"))
+                                     selected = list("Total", "Age", "Sex", "Ethnicity")),
+                                     
+                          tags$hr(style="border-color: black;"),
+                         
+                         tags$h2("Download data"),
+                         
+                            downloadButton("timeSeriesDownloadData", "Download csv")
 
                      ),
 
@@ -213,7 +219,7 @@ server <- function(input, output) {
     
     
     #download template file
-    output$downloadTemplate <- 
+    output$downloadTemplate <-
         downloadHandler(
             filename = "template.xlsx",
             
@@ -233,8 +239,8 @@ server <- function(input, output) {
         
         req(input$topics)
         
-        table <- variables %>% 
-            filter(mainSection == input$topics) %>% 
+        table <- variables %>%
+            filter(mainSection == input$topics) %>%
             distinct(subSection)
         
         selectInput("tables", "Select a table", table)
@@ -242,21 +248,21 @@ server <- function(input, output) {
     })
     
     # output$ethnicFilter <- renderUI({
-    #     
+    #
     #     # ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019_kura$variables$Ethnicity))))
-    #     
+    #
     #     ethnicities <- tibble(ethnicities = c("All", "Maori", "Asian"))
-    #     
+    #
     #     selectInput("ethnicity", "Filter by ethnicity", ethnicities)
     # })
     
     # output$groupsSelection <- renderUI({
-    #     
-    #     groups <- 
+    #
+    #     groups <-
     #         if(input$ethnicity == "All"){
     #             list("Total",
     #                  "Sex",
-    #                  "Age", 
+    #                  "Age",
     #                  "Deprivation",
     #                  "School_Year",
     #                  "Decile",
@@ -266,10 +272,10 @@ server <- function(input, output) {
     #                  )
     #         } else {
     #             list("Total",
-    #                  "Sex", 
+    #                  "Sex",
     #                  "Deprivation")
     #         }
-    #     
+    #
     #     checkboxGroupInput("groups", h3("Select groups"), groups, selected = c("Total", "Age", "Sex"))
     # })
     
@@ -310,32 +316,32 @@ server <- function(input, output) {
     ##generate the data, table, and download
     ###
     
-    variable_table <- 
+    variable_table <-
         reactive({
             
             req(input$topics, input$tables, cancelOutput = TRUE)
             
             if (!is.null(input$uploadVariables) & !reset_flag$clear){
-                return(read_excel(input$uploadVariables$datapath) %>% select(var, val, varname)) 
+                return(read_excel(input$uploadVariables$datapath) %>% select(var, val, varname))
             } else {
                 return(variables %>% filter(mainSection == input$topics, subSection == input$tables) %>% select(var, val, varname))
             }
         })
     
-    variable_title <- 
+    variable_title <-
         reactive({
             
             req(input$topics, input$tables, cancelOutput = TRUE)
             
             if (!is.null(input$uploadVariables) & !reset_flag$clear){
-                return(read_excel(input$uploadVariables$datapath) %>% select(title) %>% distinct()) 
+                return(read_excel(input$uploadVariables$datapath) %>% select(title) %>% distinct())
             } else {
                 return(variables %>% filter(mainSection == input$topics, subSection == input$tables) %>% select(title) %>% distinct())
             }
         })
     
     
-    output$prevalenceTable <- 
+    output$prevalenceTable <-
         render_gt({
             
             single_year(df = svy_2019_kura,
@@ -381,6 +387,27 @@ server <- function(input, output) {
                               filterVal = if(input$timeSeriesethnicity == "All"){NA} else {input$timeSeriesethnicity},
                               password = input$Password)
         )
+        
+    output$timeSeriesDownloadData <- downloadHandler(
+        filename = function() {
+            paste0("timeSeries_",variable_title(),"_ethnicity_",input$ethnicity,".csv")
+        },
+        content = function(file) {
+            multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
+                              variable_table = timeSeries %>%
+                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
+                                  select(var, val, varname),
+                              groups_table = input$timeSeriesGroupSelection,
+                              title = timeSeries %>%
+                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
+                                  select(title),
+                              filterGroup = if(input$timeSeriesethnicity == "All"){NA} else {"Ethnicity"},
+                              filterVal = if(input$timeSeriesethnicity == "All"){NA} else {input$timeSeriesethnicity},
+                              password = input$Password,
+                                  html_output = FALSE),
+                      file, row.names = FALSE)
+        }
+    )
     
     # output$timeSeriesPlot <-
     #     renderPlot(
@@ -408,6 +435,6 @@ server <- function(input, output) {
     
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
 
