@@ -411,7 +411,7 @@ server <- function(input, output) {
         
     output$time_series_download_data <- downloadHandler(
         filename = function() {
-            paste0("timeSeries_",variable_title(),"_ethnicity_",input$ethnicity,".csv")
+            paste0("timeSeries_",time_series_variable_title(),"_ethnicity_",input$time_series_ethnicity,".csv")
         },
         content = function(file) {
             write.csv(multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
