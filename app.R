@@ -393,7 +393,7 @@ server <- function(input, output) {
             paste0("timeSeries_",variable_title(),"_ethnicity_",input$ethnicity,".csv")
         },
         content = function(file) {
-            multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
+            write.csv(multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
                               variable_table = timeSeries %>%
                                   filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
                                   select(var, val, varname),
