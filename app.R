@@ -111,13 +111,13 @@ ui <-
 
                          width = 2,
 
-                         uiOutput("timeSeriestopicChoices"),
+                         uiOutput("time_series_topic_choices"),
 
-                         uiOutput("timeSeriestableChoices"),
+                         uiOutput("time_series_table_choices"),
 
-                         uiOutput("timeSeriesethnicFilter"),
+                         uiOutput("time_series_ethnic_filter"),
 
-                         checkboxGroupInput("timeSeriesGroupSelection",
+                         checkboxGroupInput("time_series_group_selection",
                                      h3("Select groups"),
                                      choices = list("Total",
                                                     "Age",
@@ -134,7 +134,7 @@ ui <-
                          
                          tags$h2("Download data"),
                          
-                            downloadButton("timeSeriesDownloadData", "Download csv")
+                            downloadButton("time_series_download_data", "Download csv")
 
                      ),
 
@@ -279,27 +279,27 @@ server <- function(input, output) {
     #     checkboxGroupInput("groups", h3("Select groups"), groups, selected = c("Total", "Age", "Sex"))
     # })
     
-    output$timeSeriestopicChoices<- renderUI({
+    output$time_series_topic_choices<- renderUI({
 
-        timeSeriestopic <- timeSeries %>% distinct(mainSection)
+        time_series_topic <- timeSeries %>% distinct(mainSection)
 
-        selectInput("timeSeriesTopics", "Select a topic", timeSeriestopic)
+        selectInput("time_series_topics", "Select a topic", time_series_topic)
     })
 
-    output$timeSeriestableChoices<- renderUI({
+    output$time_series_table_choices<- renderUI({
 
         timeSeriestable <- timeSeries %>%
-            filter(mainSection == input$timeSeriesTopics) %>%
+            filter(mainSection == input$time_series_topics) %>%
             distinct(subSection)
 
         selectInput("timeSeriesTables", "Select a table", timeSeriestable)
     })
 
-    output$timeSeriesethnicFilter <- renderUI({
+    output$time_series_ethnic_filter <- renderUI({
 
-        timeSeriesethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019$variables$Ethnicity))))
+        time_series_ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019$variables$Ethnicity))))
 
-        selectInput("timeSeriesethnicity", "Filter by ethnicity", timeSeriesethnicities)
+        selectInput("time_series_ethnicity", "Filter by ethnicity", time_series_ethnicities)
     })
     
     output$demographicsFilterVals <- renderUI({
@@ -339,6 +339,31 @@ server <- function(input, output) {
                 return(variables %>% filter(mainSection == input$topics, subSection == input$tables) %>% select(title) %>% distinct())
             }
         })
+        
+    
+    time_series_variable_table <-
+        reactive({
+            
+            #req(input$topics, input$tables, cancelOutput = TRUE)
+            
+          
+                return(timeSeries %>%
+                                  filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                                  select(var, val, varname))
+            
+        })
+    
+    time_series_variable_title <-
+        reactive({
+            
+            #req(input$topics, input$tables, cancelOutput = TRUE)
+            
+                return(timeSeries %>%
+                                  filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                                  select(title) %>%
+                                  distinct())
+            
+        })
     
     
     output$prevalenceTable <-
@@ -376,35 +401,27 @@ server <- function(input, output) {
     output$timeSeries <-
         render_gt(
             expr = multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
-                              variable_table = timeSeries %>%
-                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
-                                  select(var, val, varname),
-                              groups_table = input$timeSeriesGroupSelection,
-                              title = timeSeries %>%
-                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
-                                  select(title),
-                              filterGroup = if(input$timeSeriesethnicity == "All"){NA} else {"Ethnicity"},
-                              filterVal = if(input$timeSeriesethnicity == "All"){NA} else {input$timeSeriesethnicity},
+                              variable_table = time_series_variable_table(),
+                              groups_table = input$time_series_group_selection,
+                              title = time_series_variable_title(),
+                              filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
+                              filterVal = if(input$time_series_ethnicity == "All"){NA} else {input$time_series_ethnicity},
                               password = input$Password)
         )
         
-    output$timeSeriesDownloadData <- downloadHandler(
+    output$time_series_download_data <- downloadHandler(
         filename = function() {
             paste0("timeSeries_",variable_title(),"_ethnicity_",input$ethnicity,".csv")
         },
         content = function(file) {
             write.csv(multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
-                              variable_table = timeSeries %>%
-                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
-                                  select(var, val, varname),
-                              groups_table = input$timeSeriesGroupSelection,
-                              title = timeSeries %>%
-                                  filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
-                                  select(title),
-                              filterGroup = if(input$timeSeriesethnicity == "All"){NA} else {"Ethnicity"},
-                              filterVal = if(input$timeSeriesethnicity == "All"){NA} else {input$timeSeriesethnicity},
+                              variable_table = time_series_variable_table(),
+                              groups_table = input$time_series_group_selection,
+                              title = time_series_variable_title(),
+                              filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
+                              filterVal = if(input$time_series_ethnicity == "All"){NA} else {input$time_series_ethnicity},
                               password = input$Password,
-                                  html_output = FALSE),
+                              html_output = FALSE),
                       file, row.names = FALSE)
         }
     )
@@ -413,10 +430,10 @@ server <- function(input, output) {
     #     renderPlot(
     #         prevGraph1(svyyears,
     #                    variable_table = timeSeries %>%
-    #                        filter(mainSection == input$timeSeriesTopics, subSection == input$timeSeriesTables) %>%
+    #                        filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
     #                        select(variable, value, label, title),
     #                    group2 = get(!! input$timeSeriesGroup),
-    #                    filter = input$timeSeriesethnicity,
+    #                    filter = input$time_series_ethnicity,
     #                    password = input$Password2)
     #     )
     
