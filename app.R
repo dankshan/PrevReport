@@ -63,15 +63,23 @@ ui <-
                          
                              # uiOutput("ethnicFilter"),
                          
+                             selectInput("filter_type",
+                                         h3("Filter by ethnicity"),
+                                         choices = list("None",
+                                                        "Prioritised",
+                                                        "Total"),
+                                         selected = "None"),
+                         
                             selectInput("ethnicity",
-                                        h3("Filter by ethnicity"),
-                                        choices = list("All",
-                                                       "Maori",
+                                        h3("Select ethnicity"),
+                                        choices = list("Maori",
                                                        "Pacific",
                                                        "Asian",
                                                        "Other",
                                                        "European"),
-                                        selected = "All"),
+                                        selected = "Maori"),
+                         
+                            # uiOutput("ethnicity_choices"),
                          
                              checkboxGroupInput("groups",
                                                 h3("Select groups"),
@@ -123,7 +131,8 @@ ui <-
                                                     "Age",
                                                     "Sex",
                                                     # "School_Year",
-                                                    "Ethnicity"
+                                                    "Ethnicity",
+                                                    "DHB"
                                                     # "Decile",
                                                     # "Deprivation",
                                                     # "Urban_Rural"
@@ -247,6 +256,7 @@ server <- function(input, output) {
         
     })
     
+    
     # output$ethnicFilter <- renderUI({
     #
     #     # ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019_kura$variables$Ethnicity))))
@@ -316,6 +326,38 @@ server <- function(input, output) {
     ##generate the data, table, and download
     ###
     
+    
+    #allow to choose between prioritised and total ethnicity
+    filter_variable <-
+        reactive({
+            
+            if(input$filter_type == "None"){
+                return(NA)
+            } else if (input$filter_type == "Prioritised"){
+                return("ethnic_p5")
+            } else if (input$filter_type == "Total"){
+                return(case_when(input$ethnicity == "Maori" ~ "ethnic_maori",
+                                 input$ethnicity == "Pacific" ~ "ethnic_pacific",
+                                 input$ethnicity == "Asian" ~ "ethnic_asian",
+                                 input$ethnicity == "Other" ~ "ethnic_other",
+                                 input$ethnicity == "European" ~ "ethnic_european"))
+            }
+        })
+    
+    #allow to choose between prioritised and total ethnicity
+    filter_value <-
+        reactive({
+            
+            if(is.na(filter_variable())) {
+                return(NA)
+            } else if(filter_variable() == "ethnic_p5"){
+                return(input$ethnicity)
+            } else {
+                return(1)
+            }
+        })
+    
+    #create the table of variables to be generated
     variable_table <-
         reactive({
             
@@ -328,6 +370,7 @@ server <- function(input, output) {
             }
         })
     
+    #name of the table
     variable_title <-
         reactive({
             
@@ -340,6 +383,7 @@ server <- function(input, output) {
             }
         })
         
+    
     
     time_series_variable_table <-
         reactive({
@@ -373,8 +417,8 @@ server <- function(input, output) {
                         variable_table = variable_table(),
                         groups_table = input$groups,
                         title = variable_title(),
-                        filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
-                        filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
+                        filterGroup = filter_variable(),
+                        filterVal = filter_value(),
                         password = input$Password)
         })
     
@@ -382,15 +426,23 @@ server <- function(input, output) {
     
     output$downloadData <- downloadHandler(
         filename = function() {
-            paste0(variable_title(),"_ethnicity_",input$ethnicity,".csv")
+            paste0(variable_title(),"_ethnicity_",
+                   if(input$filter_type == "None"){
+                       paste0("All")
+                   } else if(input$filter_type == "Prioritised"){
+                       paste("prioritised_", input$ethnicity)
+                   } else if(input$filter_type == "Total"){
+                       paste0("total_", input$ethnicity)
+                   },
+        ".csv")
         },
         content = function(file) {
             write.csv(single_year(df = svy_2019_kura,
                                   variable_table = variable_table(),
                                   groups_table = input$groups,
                                   title = variable_title(),
-                                  filterGroup = if(input$ethnicity == "All"){NA} else {"Ethnicity"},
-                                  filterVal = if(input$ethnicity == "All"){NA} else {input$ethnicity},
+                                  filterGroup = filter_variable(),
+                                  filterVal = filter_value(),
                                   password = input$Password,
                                   html_output = FALSE),
                       file, row.names = FALSE)
