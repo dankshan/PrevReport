@@ -51,6 +51,20 @@ load_survey <- function(df){
            
     )
   
+  # if(df$variables$Year[1] == 2019){
+  #   df <- 
+  #     df %>%
+  #     mutate(DHB = DHB2015_name)
+  # } else if(df$variables$Year[1] %in% c(2007, 2012)) {
+  #   df <- 
+  #     df %>%
+  #     mutate(DHB = DHB_name)
+  # } else if(df$variables$Year[1] == 2001){
+  #   df <- 
+  #     df %>%
+  #     mutate(DHB = "NA")
+  # }
+  
 }
 
 ##remtote
@@ -80,6 +94,13 @@ svy_2001 <-
          private = 0,
          unableHC = 0)
 
+svy_2019 <-
+  svy_2019 %>%
+  mutate(DHB_name = DHB2015_name)
+
+svy_2019_kura <-
+  svy_2019_kura %>%
+  mutate(DHB_name = DHB2015_name)
 
 
 demographics <-

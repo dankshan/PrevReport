@@ -2,9 +2,18 @@ single_year <- function(df, variable_table, groups_table, title, filterGroup = N
   
   if(password == saved_password) {
     
+    # tabSubtitle <- NULL
+      
+    
     tabSubtitle <-
       paste0(
-        if(!is.na(filterGroup)){paste0("Filtered for ", filterVal, " ethnicity. \n")} else {NULL}
+        if(is.na(filterGroup)){
+          NULL
+        } else if(filterGroup == "ethnic_p5"){
+          paste0("Filtered for ", filterVal, " prioritised ethnicity. \n")
+        } else if(filterGroup %in% c("ethnic_maori", "ethnic_pacific", "ethnic_asian", "ethnic_other", "ethnic_european")){
+          paste0("Filtered for ", str_remove(filterGroup, "ethnic_"), " total ethnicity. \n")
+        }
       )
     
     ## create table footer
@@ -132,22 +141,3 @@ single_year <- function(df, variable_table, groups_table, title, filterGroup = N
   }
 }
 
-# variable_table = tibble(var = c("wellbeing", "depressed28"), val = c(1,1), varname = c("wellbeing", "depressed28"), title = "Test")
-# # # # #
-# groups_table = c("Total", "Sex")
-# # # # #
-# single_year(df = svy_2019_kura, variable_table, groups_table = groups_table, title = "Test", filterGroup = "Ethnicity", filterVal = "Asian", password = "@$@#%Youth", html_output = TRUE)
-# #   print()
-# 
-# 
-# single_year(df = svy_2019_kura,
-#             variable_table = variable_table %>%
-#               select(var, val, varname),
-#             groups_table = groups_table,
-#             title = variable_table %>% select(title) %>% distinct(),
-#             filterGroup = "Ethnicity",
-#             filterVal = "Maori",
-#             password = "@$@#%Youth")
-# 
-# 
-# single_year_table(df = test, title = "test", filterGroup = "Ethnicity", filterVal = "European")
