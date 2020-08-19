@@ -36,7 +36,11 @@ ui <-
                          
                          width = 2,
                          
-                         
+                         selectInput("data_type",
+                                     h3("Select data"),
+                                     choices = list("National calibration",
+                                                    "Regional weighting"),
+                                     selected = "National calibration"),
                          
                          tags$hr(style="border-color: black;"),
                          
@@ -121,6 +125,12 @@ ui <-
                      sidebarPanel(
 
                          width = 2,
+                         
+                         # selectInput("time_series_data_type",
+                         #             h3("Select data"),
+                         #             choices = list("National calibration",
+                         #                            "Regional weighting"),
+                         #             selected = "National calibration"),
 
                          uiOutput("time_series_topic_choices"),
 
@@ -174,6 +184,13 @@ ui <-
                                      choices = list("Schools",
                                                     "Students"),
                                      selected = "Schools"),
+                         
+                         checkboxGroupInput("demographicsPilotWharekura",
+                                     h3("Include:"),
+                                     choices = list("Pilot",
+                                                    "Wharekura"),
+                                     selected = list("Pilot",
+                                                     "Wharekura")),
                          
                          selectInput("demographicsFilterGroup",
                                      h3("Filter by group"),
@@ -330,6 +347,15 @@ server <- function(input, output) {
     ##generate the data, table, and download
     ###
     
+    df <-
+        reactive({
+            if(input$data_type == "National calibration"){
+                svy_2019_kura
+            } else if(input$data_type == "Regional weighting"){
+                svy_2019_kura_uncalibrated
+            }
+        })
+    
     
     #allow to choose between prioritised and total ethnicity
     filter_variable <-
@@ -387,7 +413,14 @@ server <- function(input, output) {
             }
         })
         
-    
+    df_table <-
+        reactive({
+            if(input$time_series_data_type == "National calibration"){
+                c("svy_2001","svy_2007", "svy_2012", "svy_2019")
+            } else if(input$time_series_data_type == "Regional weighting"){
+                c("svy_2001_uncalibrated","svy_2007_uncalibrated", "svy_2012_uncalibrated", "svy_2019_uncalibrated")
+            }
+        })
     
     time_series_variable_table <-
         reactive({
@@ -417,7 +450,7 @@ server <- function(input, output) {
     output$prevalenceTable <-
         render_gt({
             
-            single_year(df = svy_2019_kura,
+            single_year(df = df(),
                         variable_table = variable_table(),
                         groups_table = input$groups,
                         title = variable_title(),
@@ -441,7 +474,7 @@ server <- function(input, output) {
         ".csv")
         },
         content = function(file) {
-            write.csv(single_year(df = svy_2019_kura,
+            write.csv(single_year(df = df(),
                                   variable_table = variable_table(),
                                   groups_table = input$groups,
                                   title = variable_title(),
@@ -502,6 +535,8 @@ server <- function(input, output) {
                                    get(!!input$demographicsFilterGroup)
                                        },
                                filterVal = input$demographicsFilterVal,
+                            include_pilot = if_else("Pilot" %in% input$demographicsPilotWharekura, TRUE, FALSE),
+                            include_wharekura = if_else("Wharekura" %in% input$demographicsPilotWharekura, TRUE, FALSE),
                             password = input$Password)
         )
 
