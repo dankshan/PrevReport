@@ -489,7 +489,7 @@ server <- function(input, output) {
 
     output$timeSeries <-
         render_gt(
-            expr = multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
+            expr = multi_year(df_table = df_table(),
                               variable_table = time_series_variable_table(),
                               groups_table = input$time_series_group_selection,
                               title = time_series_variable_title(),
@@ -503,7 +503,7 @@ server <- function(input, output) {
             paste0("timeSeries_",time_series_variable_title(),"_ethnicity_",input$time_series_ethnicity,".csv")
         },
         content = function(file) {
-            write.csv(multi_year(df_table = c("svy_2001","svy_2007", "svy_2012", "svy_2019"),
+            write.csv(multi_year(df_table = df_table(),
                               variable_table = time_series_variable_table(),
                               groups_table = input$time_series_group_selection,
                               title = time_series_variable_title(),
