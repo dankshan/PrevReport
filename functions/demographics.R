@@ -1,4 +1,6 @@
-demTable <- function(type, filterGroup = NULL, filterVal = NULL, password){
+#this all needs to be re-worked to be more efficient
+
+demTable <- function(type, filterGroup = NULL, filterVal = NULL, include_pilot = TRUE, include_wharekura = TRUE, password){
   
   if(password == "@$@#%Youth") {
   
@@ -14,56 +16,84 @@ demTable <- function(type, filterGroup = NULL, filterVal = NULL, password){
         } else {
           !! fltGrp %in% filterVal
         }
+      ) %>%
+      filter(
+        if(include_pilot == TRUE){
+          pilot %in% c(0,1)
+        } else if(include_pilot == FALSE){
+          pilot == 0
+        }
+      ) %>%
+      filter(
+        if(include_wharekura == TRUE){
+          Wharekura %in% c(0,1)
+        } else if(include_wharekura == FALSE){
+          Wharekura == 0
+        }
       )
     
     df %>%
       group_by(GroupName = "Total", Group = Total) %>%
-      summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+      summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                 Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                 Participating.Number = sum(Participated == 1, na.rm = TRUE)) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "Education Region", Group = EducationRegion) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "Type", Group = Type) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "Kura Kaupapa Māori", Group = Kura) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "School Size", Group = SchoolSize) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "Decile Band", Group = DecileBand) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
       bind_rows(
         df %>%
           group_by(GroupName = "Decile", Group = Decile) %>%
-          summarise(Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
+          summarise(Nationally_Eligible.Number = sum(NationalEligible ==1 | WharekuraNationalEligible == 1, na.rm = TRUE),
+                    Eligible.Number = sum(Eligible ==1 | WharekuraEligible == 1, na.rm = TRUE),
                     Invited.Number = sum(Invited == 1 | WharekuraInvited == 1, na.rm = TRUE),
                     Participating.Number = sum(Participated == 1, na.rm = TRUE))
       ) %>%
-      mutate(Eligible.Percent = case_when(GroupName == "Total" ~ Eligible.Number/sum(Eligible.Number),
+      mutate(Nationally_Eligible.Percent = case_when(GroupName == "Total" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "Education Region" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "Type" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "Kura Kaupapa Māori" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "School Size" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "Decile Band" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number),
+                                          GroupName == "Decile" ~ Nationally_Eligible.Number/sum(Nationally_Eligible.Number)),
+             Eligible.Percent = case_when(GroupName == "Total" ~ Eligible.Number/sum(Eligible.Number),
                                           GroupName == "Education Region" ~ Eligible.Number/sum(Eligible.Number),
                                           GroupName == "Type" ~ Eligible.Number/sum(Eligible.Number),
                                           GroupName == "Kura Kaupapa Māori" ~ Eligible.Number/sum(Eligible.Number),
@@ -142,6 +172,20 @@ demTable <- function(type, filterGroup = NULL, filterVal = NULL, password){
           !is.na(ECSchoolID)
         } else {
           !! fltGrp %in% filterVal
+        }
+      ) %>%
+      filter(
+        if(include_pilot == TRUE){
+          pilot %in% c(0,1)
+        } else if(include_pilot == FALSE){
+          pilot == 0
+        }
+      ) %>%
+      filter(
+        if(include_wharekura == TRUE){
+          Wharekura %in% c(0,1)
+        } else if(include_wharekura == FALSE){
+          Wharekura == 0
         }
       )
     
