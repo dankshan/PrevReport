@@ -47,11 +47,30 @@ load_survey <- function(df){
            
            Total = as.factor("Total"),
            
-           Age = fct_relevel(as.factor(age), "13 and under", "14", "15", "16", "17 and over")
+           Age = fct_relevel(as.factor(age), "13 and under", "14", "15", "16", "17 and over"),
+           
+           Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
+                                                        attract_3Cat == 2 ~ "Same sex or both sexes",
+                                                        attract_3Cat == 3 ~ "Not sure or neither",
+                                                        TRUE ~ NA_character_)),
+                                    "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
            
     )
   
 }
+
+
+
+svy_2019_kura_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_regional_uncalibrated_incl_wharekura.rds")), cyphr::data_key(data_path)))
+
+svy_2019_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+
+svy_2012_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2012_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+
+svy_2007_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2007_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+
+svy_2001_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+
 
 
 svy_2019_kura <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_national_calibrated_incl_wharekura.rds")), cyphr::data_key(data_path)))
@@ -68,85 +87,121 @@ svy_2001 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_nati
 
 svy_2001 <-
   svy_2001 %>%
-  mutate(wellbeing = 0,
-         attemptSuicide = 0,
-         familyMeals = 0,
-         usedGP = 0,
-         schClinic = 0,
-         afterHours = 0,
-         ythHltCen = 0,
-         confident = 0,
-         private = 0,
-         unableHC = 0,
-         
-         attract_3Cat = case_when(Sex26  == 1 ~ 1, #Opposite Sex
-                                  Sex26 %in% c(2, 3) ~ 2, #Same sex or both sexes,
-                                  Sex26 %in% c(4, 5) ~ 3 #Not sure or neither
-         ),
-         
-         Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
-                                                      attract_3Cat == 2 ~ "Same sex or both sexes",
-                                                      attract_3Cat == 3 ~ "Not sure or neither",
-                                                      TRUE ~ NA_character_)),
-                                     "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
-         
-         Sex44 = "NA")
+  mutate(
+    wellbeing = 0,
+    attemptSuicide = 0,
+    familyMeals = 0,
+    usedGP = 0,
+    schClinic = 0,
+    afterHours = 0,
+    ythHltCen = 0,
+    confident = 0,
+    private = 0,
+    unableHC = 0,
+    
+    Sex44 = "NA"
+  )
+
+svy_2001_uncalibrated <-
+  svy_2001_uncalibrated %>%
+  mutate(
+    wellbeing = 0,
+    attemptSuicide = 0,
+    familyMeals = 0,
+    usedGP = 0,
+    schClinic = 0,
+    afterHours = 0,
+    ythHltCen = 0,
+    confident = 0,
+    private = 0,
+    unableHC = 0,
+    
+    Sex44 = "NA"
+  )
 
 svy_2007 <-
   svy_2007 %>%
-  mutate(attract_3Cat = case_when(Sex26  == 1 ~ 1, #Opposite Sex
-                                  Sex26 %in% c(2, 3) ~ 2, #Same sex or both sexes,
-                                  Sex26 %in% c(4, 5) ~ 3 #Not sure or neither
-  ),
-  
-  Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
-                                               attract_3Cat == 2 ~ "Same sex or both sexes",
-                                               attract_3Cat == 3 ~ "Not sure or neither",
-                                               TRUE ~ NA_character_)),
-                           "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
-  
-  Sex44 = "NA")
+  mutate(
+    
+    Sex44 = "NA"
+    )
+
+svy_2007_uncalibrated <-
+  svy_2007_uncalibrated %>%
+  mutate(
+    
+    Sex44 = "NA"
+  )
 
 svy_2012 <-
   svy_2012 %>%
-  mutate(attract_3Cat = case_when(Sex26  == 1 ~ 1, #Opposite Sex
-                                  Sex26 %in% c(2, 3) ~ 2, #Same sex or both sexes,
-                                  Sex26 %in% c(4, 5) ~ 3 #Not sure or neither
-  ),
-  
-  Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
-                                               attract_3Cat == 2 ~ "Same sex or both sexes",
-                                               attract_3Cat == 3 ~ "Not sure or neither",
-                                               TRUE ~ NA_character_)),
-                           "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
-  
-  Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
-                                          Sex44 == 2 ~ "No",
-                                          Sex44 == 3 ~ "Unsure",
-                                          Sex44 == 4 ~ "I don't understand",
-                                          TRUE ~ NA_character_)),
-                      "Yes", "No", "Unsure", "I don't understand"))
+  mutate(
+    
+    Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
+                                            Sex44 == 2 ~ "No",
+                                            Sex44 == 3 ~ "Unsure",
+                                            Sex44 == 4 ~ "I don't understand",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure", "I don't understand")
+  )
+
+svy_2012_uncalibrated <-
+  svy_2012_uncalibrated %>%
+  mutate(
+    
+    Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
+                                            Sex44 == 2 ~ "No",
+                                            Sex44 == 3 ~ "Unsure",
+                                            Sex44 == 4 ~ "I don't understand",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure", "I don't understand")
+  )
 
 svy_2019 <-
   svy_2019 %>%
+  mutate(
+    DHB_name = DHB2015_name,
+    
+    Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
+                                            trans == 0 ~ "No",
+                                            trans == 2 ~ "Unsure",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure"),
+    
+    Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
+                                            Sex44 == 2 ~ "No",
+                                            Sex44 == 3 ~ "Unsure",
+                                            Sex44 == 4 ~ "I don't understand",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure", "I don't understand"))
+
+svy_2019_uncalibrated <-
+  svy_2019_uncalibrated %>%
+  mutate(
+    DHB_name = DHB2015_name,
+    
+    Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
+                                            trans == 0 ~ "No",
+                                            trans == 2 ~ "Unsure",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure"),
+    
+    Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
+                                            Sex44 == 2 ~ "No",
+                                            Sex44 == 3 ~ "Unsure",
+                                            Sex44 == 4 ~ "I don't understand",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure", "I don't understand"))
+
+svy_2019_kura <-
+  svy_2019_kura %>%
   mutate(DHB_name = DHB2015_name,
          
-         attract_3Cat = case_when(Sex26  == 1 ~ 1, #Opposite Sex
-                                  Sex26 %in% c(2, 3) ~ 2, #Same sex or both sexes,
-                                  Sex26 %in% c(4, 5) ~ 3 #Not sure or neither
-         ),
-         
-         Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
-                                                      attract_3Cat == 2 ~ "Same sex or both sexes",
-                                                      attract_3Cat == 3 ~ "Not sure or neither",
-                                                      TRUE ~ NA_character_)),
-                                  "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
-         
          Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
-                                                 trans == 0 ~ "No",
-                                                 trans == 2 ~ "Unsure",
-                                                 TRUE ~ NA_character_)),
-                             "Yes", "No", "Unsure"),
+                                                      trans == 0 ~ "No",
+                                                      trans == 2 ~ "Unsure",
+                                                      TRUE ~ NA_character_)),
+                                  "Yes", "No", "Unsure"),
          
          Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
                                                  Sex44 == 2 ~ "No",
@@ -155,26 +210,15 @@ svy_2019 <-
                                                  TRUE ~ NA_character_)),
                              "Yes", "No", "Unsure", "I don't understand"))
 
-svy_2019_kura <-
-  svy_2019_kura %>%
+svy_2019_kura_uncalibrated <-
+  svy_2019_kura_uncalibrated %>%
   mutate(DHB_name = DHB2015_name,
          
-         attract_3Cat = case_when(Sex26  == 1 ~ 1, #Opposite Sex
-                                  Sex26 %in% c(2, 3) ~ 2, #Same sex or both sexes,
-                                  Sex26 %in% c(4, 5) ~ 3 #Not sure or neither
-         ),
-         
-         Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
-                                                      attract_3Cat == 2 ~ "Same sex or both sexes",
-                                                      attract_3Cat == 3 ~ "Not sure or neither",
-                                                      TRUE ~ NA_character_)),
-                                  "Opposite Sex", "Same sex or both sexes", "Not sure or neither"),
-         
          Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
-                                                      trans == 0 ~ "No",
-                                                      trans == 2 ~ "Unsure",
-                                                      TRUE ~ NA_character_)),
-                                  "Yes", "No", "Unsure"),
+                                                 trans == 0 ~ "No",
+                                                 trans == 2 ~ "Unsure",
+                                                 TRUE ~ NA_character_)),
+                             "Yes", "No", "Unsure"),
          
          Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
                                                  Sex44 == 2 ~ "No",
@@ -195,15 +239,15 @@ demographics <-
                                                       Decile == 99 ~ "No Decile information")),
                                   "Low (1-3)", "Medium (4-7)", "High (8-10)", "No Decile information"),
          
-         SchoolSize = fct_relevel(as.factor(case_when(ECRoll >= 100 ~ "Large",
-                                                      ECRoll < 100 ~ "Small")),
+         SchoolSize = fct_relevel(as.factor(case_when(ECRoll >= 350 ~ "Large",
+                                                      ECRoll < 350 ~ "Small")),
                                   "Small", "Large"),
          
          Kura = fct_relevel(as.factor(case_when(Wharekura == 1 ~ "Kura Kaupapa Maori",
                                                 Wharekura == 0 ~ "Non-Kura Kaupapa Maori")),
                             "Non-Kura Kaupapa Maori", "Kura Kaupapa Maori")
   ) %>%
-  mutate_at(vars(ECMaori:`ECEuropean/Pakeha`), ~as.numeric(.))
+  mutate_at(vars(ECMaori:surveyYear13), ~as.numeric(.))
 
 demographics2 <-
   demographics %>%
@@ -215,7 +259,7 @@ demographics2 <-
          EC_Ethnicity_Asian = ECAsian,
          EC_Ethnicity_MELAA = ECMELAA,
          EC_Ethnicity_Other = ECOther,
-         EC_Ethnicity_European = `ECEuropean/Pakeha`,
+         EC_Ethnicity_European = ECEuropean,
          EC_Year_9 = ECYear9,
          EC_Year_10 = ECYear10,
          EC_Year_11 = ECYear11,
@@ -258,8 +302,8 @@ demographics2 <-
          survey_Year_12 = surveyYear12,
          survey_Year_13 = surveyYear13) %>%
   mutate_at(vars(contains("_")), list(~as.numeric(.))) %>%
-  select(ECSchoolID, Type, Authority, Eligible, Invited, Participated, Wharekura, WharekuraEligible, WharekuraInvited, Decile, DecileBand, EducationRegion, SchoolSize, Kura, contains("EC_"), contains("survey_")) %>%
-  pivot_longer(-c(ECSchoolID, Type, Authority, Eligible, Invited, Participated, Wharekura, WharekuraEligible, WharekuraInvited, Decile, DecileBand, EducationRegion, SchoolSize, Kura), names_to = c("ECSurv", "Group1", "Group2"), names_sep = "_") %>%
+  select(ECSchoolID, Type, Authority, Eligible, Invited, pilot, Participated, Wharekura, WharekuraEligible, WharekuraInvited, Decile, DecileBand, EducationRegion, SchoolSize, Kura, contains("EC_"), contains("survey_")) %>%
+  pivot_longer(-c(ECSchoolID, Type, Authority, Eligible, Invited, pilot, Participated, Wharekura, WharekuraEligible, WharekuraInvited, Decile, DecileBand, EducationRegion, SchoolSize, Kura), names_to = c("ECSurv", "Group1", "Group2"), names_sep = "_") %>%
   mutate(Group1 = fct_relevel(as.factor(Group1), "Total", "Sex", "Age", "Ethnicity", "Year"),
          Group2 = fct_relevel(as.factor(Group2), "Total", "Male", "Female", "9", "10", "11", "Under12", "12", "13", "14", "15", "16", "17", "18", "19", "Over19", "Maori", "Pacific", "Asian", "Other", "MELAA", "European"))
 
