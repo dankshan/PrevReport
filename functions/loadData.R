@@ -122,21 +122,18 @@ svy_2001_uncalibrated <-
 svy_2007 <-
   svy_2007 %>%
   mutate(
-    
     Sex44 = "NA"
     )
 
 svy_2007_uncalibrated <-
   svy_2007_uncalibrated %>%
   mutate(
-    
     Sex44 = "NA"
   )
 
 svy_2012 <-
   svy_2012 %>%
   mutate(
-    
     Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
                                             Sex44 == 2 ~ "No",
                                             Sex44 == 3 ~ "Unsure",
@@ -148,7 +145,6 @@ svy_2012 <-
 svy_2012_uncalibrated <-
   svy_2012_uncalibrated %>%
   mutate(
-    
     Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
                                             Sex44 == 2 ~ "No",
                                             Sex44 == 3 ~ "Unsure",
@@ -160,8 +156,6 @@ svy_2012_uncalibrated <-
 svy_2019 <-
   svy_2019 %>%
   mutate(
-    DHB_name = DHB2015_name,
-    
     Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
                                             trans == 0 ~ "No",
                                             trans == 2 ~ "Unsure",
@@ -178,8 +172,6 @@ svy_2019 <-
 svy_2019_uncalibrated <-
   svy_2019_uncalibrated %>%
   mutate(
-    DHB_name = DHB2015_name,
-    
     Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
                                             trans == 0 ~ "No",
                                             trans == 2 ~ "Unsure",
@@ -195,25 +187,23 @@ svy_2019_uncalibrated <-
 
 svy_2019_kura <-
   svy_2019_kura %>%
-  mutate(DHB_name = DHB2015_name,
-         
-         Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
-                                                      trans == 0 ~ "No",
-                                                      trans == 2 ~ "Unsure",
-                                                      TRUE ~ NA_character_)),
-                                  "Yes", "No", "Unsure"),
-         
-         Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
-                                                 Sex44 == 2 ~ "No",
-                                                 Sex44 == 3 ~ "Unsure",
-                                                 Sex44 == 4 ~ "I don't understand",
-                                                 TRUE ~ NA_character_)),
-                             "Yes", "No", "Unsure", "I don't understand"))
+  mutate(
+    Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
+                                            trans == 0 ~ "No",
+                                            trans == 2 ~ "Unsure",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure"),
+    
+    Sex44 = fct_relevel(as.factor(case_when(Sex44 == 1 ~ "Yes",
+                                            Sex44 == 2 ~ "No",
+                                            Sex44 == 3 ~ "Unsure",
+                                            Sex44 == 4 ~ "I don't understand",
+                                            TRUE ~ NA_character_)),
+                        "Yes", "No", "Unsure", "I don't understand"))
 
 svy_2019_kura_uncalibrated <-
   svy_2019_kura_uncalibrated %>%
-  mutate(DHB_name = DHB2015_name,
-         
+  mutate(
          Trans = fct_relevel(as.factor(case_when(trans == 1 ~ "Yes",
                                                  trans == 0 ~ "No",
                                                  trans == 2 ~ "Unsure",
