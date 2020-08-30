@@ -44,20 +44,8 @@ multi_year <- function(df_table, variable_table, groups_table, title, filterGrou
                   }
                 ) %>%
                 group_by(group1 = Year, group2 = !!as.name(grp)) %>%
-                summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% !!val &
-                                                          if(!is.na(!!filterGroup)){
-                                                            !!as.name(filterGroup) == !!filterVal
-                                                          } else {
-                                                            !is.na(Total)
-                                                          },
-                                                        na.rm = TRUE)),
-                          !! varnameN := unweighted(sum(!is.na(!!as.name(var)) &
-                                                          if(!is.na(!!filterGroup)){
-                                                            !!as.name(filterGroup) == !!filterVal
-                                                          } else {
-                                                            !is.na(Total)
-                                                          },
-                                                        na.rm = TRUE)),
+                summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% !!val, na.rm = TRUE)),
+                          !! varnameN := unweighted(sum(!is.na(!!as.name(var)), na.rm = TRUE)),
                           !! varnamepct := survey_ratio(!!as.name(var) %in% !!val, !is.na(!!as.name(var)), na.rm = TRUE, vartype = "ci", level = 0.95)
                 ) %>%
                 mutate_at(vars(contains("pct")), function(x) formatC(round(x * 100, 1), digits = 1, format = "f")) %>%
