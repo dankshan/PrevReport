@@ -98,7 +98,8 @@ ui <-
                                                                "Region",
                                                                "Attraction",
                                                                "Trans",
-                                                               "Sex44"
+                                                               "Sex44",
+                                                               "Part_of_school"
                                                 ), selected = list("Total",
                                                                    "Age",
                                                                    "Sex")),
@@ -146,7 +147,8 @@ ui <-
                                                     # "School_Year",
                                                     "Ethnicity",
                                                     "Attraction",
-                                                    "Sex44"
+                                                    "Sex44",
+                                                    "Part_of_school"
                                                     # "Decile",
                                                     # "Deprivation",
                                                     # "Urban_Rural"
