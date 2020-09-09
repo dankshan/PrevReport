@@ -1,7 +1,17 @@
-variable_table = tibble(var = "wellbeing", val = 1, varname = "wellbeing")
+variable_table = tibble(var = "Cook8", val = 2, varname = "Cook8")
 variable_table = tibble(var = c("transex", "transex", "transex"), val = c("Yes", "No", "Unsure"), varname = c("Yes", "No", "Unsure"))
 
-groups_table = c("Total", "decile_band")
+variable_table <-
+  variables %>%
+  filter(mainSection == "Aatest") %>%
+  select(-title, -mainSection, -subSection) %>%
+  mutate(val2 = as.numeric(str_split(val, pattern = ",", simplify = TRUE)),
+         val3 = as.numeric)
+
+str(paste("1", "2", "3", sep = ","))
+
+
+groups_table = c("Total")
 
 title = "test"
 
@@ -84,3 +94,6 @@ groups_table %>%
       na.omit()
   }) %>%
   select(groupType, groupName, everything())
+
+
+test2 <- as.numeric(str_split("1,2", pattern = ",", simplify = TRUE))
