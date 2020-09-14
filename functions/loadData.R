@@ -69,11 +69,6 @@ load_survey <- function(df){
                                                    Sex44 == 90 ~ "No data available",
                                                    TRUE ~ NA_character_)),
                                "Yes", "No", "Unsure", "I don't understand", "No data available"),
-           
-           Part_of_school = fct_relevel(as.factor(case_when(partSch == 1 ~ "Feels part of school",
-                                                            partSch == 0 ~ "Not part of school",
-                                                   TRUE ~ NA_character_)),
-                               "Feels part of school", "Not part of school")
     )
   
 }
