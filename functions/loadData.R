@@ -1,8 +1,13 @@
 data_path <- "./data/"
 
-variables <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "variables"))
+variables <-
+  read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "variables") %>%
+  filter(!is.na(var))
 
-timeSeries <- na.omit(read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "timeSeries"))
+timeSeries <-
+  read_excel(paste0(data_path, "outputVariables.xlsx"), sheet = "timeSeries") %>%
+  filter(!is.na(var))
+
 
 saved_password <- cyphr::decrypt(readRDS(paste0(data_path, "password.rds")), cyphr::data_key(data_path))
 

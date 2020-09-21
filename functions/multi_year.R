@@ -1,4 +1,4 @@
-multi_year <- function(df_table, variable_table, groups_table, title, filterGroup = NA, filterVal = NA, password = NULL, html_output = TRUE){
+multi_year <- function(df_table, variable_table, groups_table, title, footnote = NA, filterGroup = NA, filterVal = NA, password = NULL, html_output = TRUE){
   
   if(password == saved_password) {
   
@@ -11,6 +11,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, filterGrou
   ## create table footer
   sourceNote <<- 
     paste0(
+      if(!is.na(footnote)) {paste0(footnote)} else {NULL},
       if("Neighbourhood_Deprivation" %in% groups_table) {paste0("NZ Deprivation Index 2018, Low (1-3), Medium (4-7), High (8-10). \n")} else {NULL},
       if("School_Decile" %in% groups_table) {paste0("School Decile, Low (1-3), Medium (4-7), High (8-10). \n")} else {NULL},
       if("Disability" %in% groups_table) {paste0("Chronic condition determined by long term health problem, disability, or pain. \n")} else {NULL},

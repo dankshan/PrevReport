@@ -412,6 +412,19 @@ server <- function(input, output) {
                 return(variables %>% filter(mainSection == input$topics, subSection == input$tables) %>% select(title) %>% distinct())
             }
         })
+    
+    #need to handle multple footnotes
+    variable_footnote <-
+        reactive({
+            
+            req(input$topics, input$tables, cancelOutput = TRUE)
+            
+            if (!is.null(input$uploadVariables) & !reset_flag$clear){
+                return(read_excel(input$uploadVariables$datapath) %>% select(footnote))
+            } else {
+                return(variables %>% filter(mainSection == input$topics, subSection == input$tables) %>% select(footnote))
+            }
+        })
         
     # df_table <-
     #     reactive({
@@ -428,9 +441,9 @@ server <- function(input, output) {
             #req(input$topics, input$tables, cancelOutput = TRUE)
             
           
-                return(timeSeries %>%
-                                  filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
-                                  select(var, val, varname))
+            return(timeSeries %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       select(var, val, varname))
             
         })
     
@@ -439,11 +452,23 @@ server <- function(input, output) {
             
             #req(input$topics, input$tables, cancelOutput = TRUE)
             
-                return(timeSeries %>%
-                                  filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
-                                  select(title) %>%
-                                  distinct())
+            return(timeSeries %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       select(title) %>%
+                       distinct())
             
+        })
+    
+    
+    time_series_variable_footnote <-
+        reactive({
+
+            #req(input$topics, input$tables, cancelOutput = TRUE)
+
+            return(timeSeries %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       select(footnote))
+
         })
     
     
@@ -454,6 +479,7 @@ server <- function(input, output) {
                         variable_table = variable_table(),
                         groups_table = input$groups,
                         title = variable_title(),
+                        footnote = variable_footnote(),
                         filterGroup = filter_variable(),
                         filterVal = filter_value(),
                         password = input$Password)
@@ -478,6 +504,7 @@ server <- function(input, output) {
                                   variable_table = variable_table(),
                                   groups_table = input$groups,
                                   title = variable_title(),
+                                  footnote = variable_footnote(),
                                   filterGroup = filter_variable(),
                                   filterVal = filter_value(),
                                   password = input$Password,
@@ -493,6 +520,7 @@ server <- function(input, output) {
                               variable_table = time_series_variable_table(),
                               groups_table = input$time_series_group_selection,
                               title = time_series_variable_title(),
+                              footnote = time_series_variable_footnote(),
                               filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
                               filterVal = if(input$time_series_ethnicity == "All"){NA} else {input$time_series_ethnicity},
                               password = input$Password)
@@ -507,6 +535,7 @@ server <- function(input, output) {
                               variable_table = time_series_variable_table(),
                               groups_table = input$time_series_group_selection,
                               title = time_series_variable_title(),
+                              footnote = time_series_variable_footnote(),
                               filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
                               filterVal = if(input$time_series_ethnicity == "All"){NA} else {input$time_series_ethnicity},
                               password = input$Password,
