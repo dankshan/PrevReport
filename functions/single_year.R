@@ -49,6 +49,7 @@ single_year <- function(df, variable_table, groups_table, title, footnote = NA, 
                        !is.na(Total)
                      }
               ) %>%
+              filter(!is.na(!!as.name(grp))) %>%
               group_by(groupName = !! as.name(grp)) %>%
               summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% c(as.numeric(str_split(!!val, pattern = ",", simplify = TRUE))), na.rm = TRUE)),
                         !! varnameN := unweighted(sum(!is.na(!!as.name(var)), na.rm = TRUE)),
