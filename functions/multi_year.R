@@ -39,7 +39,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, footnote =
               get(df) %>%
                 filter(
                   if(!is.na(filterGroup)){
-                    !! as.name(filterGroup) == filterVal
+                    !!as.name(filterGroup) == filterVal
                   } else {
                     !is.na(Total)
                   }

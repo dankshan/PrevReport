@@ -97,3 +97,63 @@ groups_table %>%
 
 
 test2 <- as.numeric(str_split("1,2", pattern = ",", simplify = TRUE))
+
+
+
+
+##### ------
+
+df_table <- c("svy_2001","svy_2007", "svy_2012", "svy_2019")
+
+groups_table <- c("Total")
+
+variable_table = tibble(var = "wellbeing", val = 1, varname = "wellbeing")
+
+df_table %>%
+  map_dfr(function(df) {
+    
+    groups_table %>%
+      map_df(function(group) {
+        
+        variable_table  %>%
+          pmap(function(var, val, varname, grp = group){
+            
+            varnamen <- paste0(varname, "_n")
+            varnameN <- paste0(varname, "_N")
+            varnamepct <- paste0(varname, "_pct")
+            
+            varnameNoutput <- paste0(varname,"**n", "\n", "(N)")
+            varnamepctoutput <- paste0(varname, "**%", "\n", "[95% CI]")
+            
+            get(df) %>%
+              filter(
+                  ethnic_p6 == "Asian"
+              ) %>%
+              filter(!is.na(!!as.name(grp))) %>%
+              group_by(group1 = Year, group2 = !!as.name(grp)) %>%
+              summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% !!val, na.rm = TRUE)),
+                        !! varnameN := unweighted(sum(!is.na(!!as.name(var)), na.rm = TRUE)),
+                        !! varnamepct := survey_ratio(!!as.name(var) %in% !!val, !is.na(!!as.name(var)), na.rm = TRUE, vartype = "ci", level = 0.95)
+              ) %>%
+              mutate_at(vars(contains("pct")), function(x) formatC(round(x * 100, 1), digits = 1, format = "f")) %>%
+              mutate_at(vars(contains("n")), function(x) formatC(x, big.mark=",")) %>%
+              mutate(groupType1 = "Year",
+                     groupType2 = paste0(group))
+          }) %>%
+          reduce(left_join, by = c("groupType1", "group1", "groupType2", "group2")) %>%
+          na.omit()
+      }) %>%
+      select(groupType1, group1, groupType2, group2, everything())
+  }) %>%
+  pivot_longer(cols = c(-groupType1, -group1, -groupType2, -group2), names_to = c("var", "type1", "type2"), names_sep = "_") %>%
+  pivot_wider(names_from = c(group1, type1, type2), names_prefix = "Year", names_sep = "_") %>%
+  mutate(`Year 2001**n (N)`= paste0(Year2001_n_NA, "\n(", Year2001_N_NA, ")"),
+         `Year 2001**% [95% CI]` = paste0(Year2001_pct_NA, "\n[", Year2001_pct_low, "-", Year2001_pct_upp, "]"),
+         `Year 2007**n (N)`= paste0(Year2007_n_NA, "\n(", Year2007_N_NA, ")"),
+         `Year 2007**% [95% CI]` = paste0(Year2007_pct_NA, "\n[", Year2007_pct_low, "-", Year2007_pct_upp, "]"),
+         `Year 2012**n (N)`= paste0(Year2012_n_NA, "\n(", Year2012_N_NA, ")"),
+         `Year 2012**% [95% CI]` = paste0(Year2012_pct_NA, "\n[", Year2012_pct_low, "-", Year2012_pct_upp, "]"),
+         `Year 2019**n (N)`= paste0(Year2019_n_NA, "\n(", Year2019_N_NA, ")"),
+         `Year 2019**% [95% CI]` = paste0(Year2019_pct_NA, "\n[", Year2019_pct_low, "-", Year2019_pct_upp, "]")) %>%
+  select(groupType2, group2, everything(), -groupType1, -contains("_pct"), -contains("_n"))
+

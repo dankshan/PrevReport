@@ -44,10 +44,10 @@ single_year <- function(df, variable_table, groups_table, title, footnote = NA, 
             
             df %>%
               filter(if(!is.na(!!filterGroup)){
-                       !!as.name(filterGroup) == !!filterVal
-                     } else {
-                       !is.na(Total)
-                     }
+                !!as.name(filterGroup) == filterVal
+              } else {
+                !is.na(Total)
+              }
               ) %>%
               filter(!is.na(!!as.name(grp))) %>%
               group_by(groupName = !! as.name(grp)) %>%
