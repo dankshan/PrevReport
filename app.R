@@ -126,11 +126,11 @@ ui <-
 
                          width = 2,
                          
-                         # selectInput("time_series_data_type",
-                         #             h3("Select data"),
-                         #             choices = list("National calibration",
-                         #                            "Regional weighting"),
-                         #             selected = "National calibration"),
+                         selectInput("time_series_data_type",
+                                     h3("Select data"),
+                                     choices = list("National calibration",
+                                                    "Regional weighting"),
+                                     selected = "National calibration"),
 
                          uiOutput("time_series_topic_choices"),
 
@@ -426,14 +426,14 @@ server <- function(input, output) {
             }
         })
         
-    # df_table <-
-    #     reactive({
-    #         if(input$time_series_data_type == "National calibration"){
-    #             c("svy_2001","svy_2007", "svy_2012", "svy_2019")
-    #         } else if(input$time_series_data_type == "Regional weighting"){
-    #             c("svy_2001_uncalibrated","svy_2007_uncalibrated", "svy_2012_uncalibrated", "svy_2019_uncalibrated")
-    #         }
-    #     })
+    df_table <-
+        reactive({
+            if(input$time_series_data_type == "National calibration"){
+                c("svy_2001","svy_2007", "svy_2012", "svy_2019")
+            } else if(input$time_series_data_type == "Regional weighting"){
+                c("svy_2001_uncalibrated","svy_2007_uncalibrated", "svy_2012_uncalibrated", "svy_2019_uncalibrated")
+            }
+        })
     
     time_series_variable_table <-
         reactive({
@@ -516,7 +516,7 @@ server <- function(input, output) {
 
     output$timeSeries <-
         render_gt(
-            expr = multi_year(df_table = c("svy_2001_uncalibrated","svy_2007_uncalibrated", "svy_2012_uncalibrated", "svy_2019_uncalibrated"),
+            expr = multi_year(df_table = df_table(),
                               variable_table = time_series_variable_table(),
                               groups_table = input$time_series_group_selection,
                               title = time_series_variable_title(),
