@@ -132,26 +132,28 @@ ui <-
                                                     "Regional weighting"),
                                      selected = "National calibration"),
 
-                         uiOutput("time_series_topic_choices"),
+                         uiOutput("time_series_topics"),
 
-                         uiOutput("time_series_table_choices"),
+                         uiOutput("time_series_tables"),
 
-                         uiOutput("time_series_ethnic_filter"),
+                         uiOutput("time_series_ethnicity"),
+                         
+                         uiOutput("time_series_groups"),
 
-                         checkboxGroupInput("time_series_group_selection",
-                                     h3("Select groups"),
-                                     choices = list("Total",
-                                                    "Age",
-                                                    "Sex",
-                                                    # "School_Year",
-                                                    "Ethnicity",
-                                                    "Attraction",
-                                                    "Sex44"
-                                                    # "Decile",
-                                                    # "Deprivation",
-                                                    # "Urban_Rural"
-                                     ),
-                                     selected = list("Total", "Age", "Sex", "Ethnicity")),
+                         # checkboxGroupInput("time_series_group_selection",
+                         #             h3("Select groups"),
+                         #             choices = list("Total",
+                         #                            "Age",
+                         #                            "Sex",
+                         #                            # "School_Year",
+                         #                            "Ethnicity",
+                         #                            "Attraction",
+                         #                            "Sex44"
+                         #                            # "Decile",
+                         #                            # "Deprivation",
+                         #                            # "Urban_Rural"
+                         #             ),
+                         #             selected = list("Total", "Age", "Sex", "Ethnicity")),
                                      
                           tags$hr(style="border-color: black;"),
                          
@@ -278,59 +280,46 @@ server <- function(input, output) {
     })
     
     
-    # output$ethnicFilter <- renderUI({
-    #
-    #     # ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019_kura$variables$Ethnicity))))
-    #
-    #     ethnicities <- tibble(ethnicities = c("All", "Maori", "Asian"))
-    #
-    #     selectInput("ethnicity", "Filter by ethnicity", ethnicities)
-    # })
-    
-    # output$groupsSelection <- renderUI({
-    #
-    #     groups <-
-    #         if(input$ethnicity == "All"){
-    #             list("Total",
-    #                  "Sex",
-    #                  "Age",
-    #                  "Deprivation",
-    #                  "School_Year",
-    #                  "Decile",
-    #                  "Urban_Rural",
-    #                  "Region"
-    #                  # "Disability"
-    #                  )
-    #         } else {
-    #             list("Total",
-    #                  "Sex",
-    #                  "Deprivation")
-    #         }
-    #
-    #     checkboxGroupInput("groups", h3("Select groups"), groups, selected = c("Total", "Age", "Sex"))
-    # })
-    
-    output$time_series_topic_choices<- renderUI({
 
-        time_series_topic <- timeSeries %>% distinct(mainSection)
+### create UI for time series data
+    
+    output$time_series_topics<- renderUI({
 
-        selectInput("time_series_topics", "Select a topic", time_series_topic)
+        topics <- timeSeries %>% distinct(mainSection)
+
+        selectInput("time_series_topics", "Select a topic", topics)
     })
 
-    output$time_series_table_choices<- renderUI({
+    output$time_series_tables<- renderUI({
 
-        timeSeriestable <- timeSeries %>%
+        table <- timeSeries %>%
             filter(mainSection == input$time_series_topics) %>%
             distinct(subSection)
 
-        selectInput("timeSeriesTables", "Select a table", timeSeriestable)
+        selectInput("time_series_tables", "Select a table", table)
     })
 
-    output$time_series_ethnic_filter <- renderUI({
+    output$time_series_ethnicity <- renderUI({
 
-        time_series_ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019$variables$Ethnicity))))
+        ethnicities <- tibble(ethnicities = c("All", unique(as.character(svy_2019$variables$Ethnicity))))
 
-        selectInput("time_series_ethnicity", "Filter by ethnicity", time_series_ethnicities)
+        selectInput("time_series_ethnicity", "Filter by ethnicity", ethnicities)
+    })
+    
+    output$time_series_groups <- renderUI({
+        #srvyr breaks when using a clibrated data set, grouping by a variable that is already variable. So don't allow Ethnicity to be grouped if it is filtered
+        
+        # choice <- list("Total", "Age", "Sex", "Ethnicity")
+        
+        groups <-
+        
+            if(input$time_series_ethnicity == "All") {
+                list("Total", "Age", "Sex", "Ethnicity")
+            } else {
+                list("Total", "Age", "Sex")
+            }
+        
+        checkboxGroupInput("time_series_groups", "Select groups", choices = groups, selected = list("Total", "Age", "Sex"))
     })
     
     output$demographicsFilterVals <- renderUI({
@@ -343,9 +332,9 @@ server <- function(input, output) {
         selectInput("demographicsFilterVal", "Select group value", values)
     })
     
-    ###
-    ##generate the data, table, and download
-    ###
+###
+##generate the data, table, and download
+###
     
     df <-
         reactive({
@@ -426,6 +415,7 @@ server <- function(input, output) {
             }
         })
         
+    #list of tables for time_series data based on national/regional selection
     df_table <-
         reactive({
             if(input$time_series_data_type == "National calibration"){
@@ -442,7 +432,7 @@ server <- function(input, output) {
             
           
             return(timeSeries %>%
-                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$time_series_tables) %>%
                        select(var, val, varname))
             
         })
@@ -453,7 +443,7 @@ server <- function(input, output) {
             #req(input$topics, input$tables, cancelOutput = TRUE)
             
             return(timeSeries %>%
-                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$time_series_tables) %>%
                        select(title) %>%
                        distinct())
             
@@ -466,7 +456,7 @@ server <- function(input, output) {
             #req(input$topics, input$tables, cancelOutput = TRUE)
 
             return(timeSeries %>%
-                       filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+                       filter(mainSection == input$time_series_topics, subSection == input$time_series_tables) %>%
                        select(footnote))
 
         })
@@ -518,7 +508,7 @@ server <- function(input, output) {
         render_gt(
             expr = multi_year(df_table = df_table(),
                               variable_table = time_series_variable_table(),
-                              groups_table = input$time_series_group_selection,
+                              groups_table = input$time_series_groups,
                               title = time_series_variable_title(),
                               footnote = time_series_variable_footnote(),
                               filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
@@ -533,7 +523,7 @@ server <- function(input, output) {
         content = function(file) {
             write.csv(multi_year(df_table = df_table(),
                               variable_table = time_series_variable_table(),
-                              groups_table = input$time_series_group_selection,
+                              groups_table = input$time_series_groups,
                               title = time_series_variable_title(),
                               footnote = time_series_variable_footnote(),
                               filterGroup = if(input$time_series_ethnicity == "All"){NA} else {"Ethnicity"},
@@ -548,7 +538,7 @@ server <- function(input, output) {
     #     renderPlot(
     #         prevGraph1(svyyears,
     #                    variable_table = timeSeries %>%
-    #                        filter(mainSection == input$time_series_topics, subSection == input$timeSeriesTables) %>%
+    #                        filter(mainSection == input$time_series_topics, subSection == input$time_series_tables) %>%
     #                        select(variable, value, label, title),
     #                    group2 = get(!! input$timeSeriesGroup),
     #                    filter = input$time_series_ethnicity,

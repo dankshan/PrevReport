@@ -32,7 +32,7 @@ single_year <- function(df, variable_table, groups_table, title, footnote = NA, 
       map_df(function(group) {
         
         variable_table  %>%
-          pmap(function(var, val, varname, grp = group){
+          pmap(function(var, val, varname){
             
             varnamen <- paste0(varname,"_n")
             varnameN <- paste0(varname,"_N")
@@ -44,13 +44,12 @@ single_year <- function(df, variable_table, groups_table, title, footnote = NA, 
             
             df %>%
               filter(if(!is.na(!!filterGroup)){
-                !!as.name(filterGroup) == filterVal
+                !!as.name(filterGroup) == !!filterVal
               } else {
                 !is.na(Total)
               }
               ) %>%
-              filter(!is.na(!!as.name(grp))) %>%
-              group_by(groupName = !! as.name(grp)) %>%
+              group_by(groupName = !!as.name(group)) %>%
               summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% c(as.numeric(str_split(!!val, pattern = ",", simplify = TRUE))), na.rm = TRUE)),
                         !! varnameN := unweighted(sum(!is.na(!!as.name(var)), na.rm = TRUE)),
                         !! varnamepct := survey_ratio(!!as.name(var) %in% c(as.numeric(str_split(!!val, pattern = ",", simplify = TRUE))), !is.na(!!as.name(var)), na.rm = TRUE, vartype = "ci", level = 0.95)

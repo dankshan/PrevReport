@@ -27,7 +27,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, footnote =
         map_df(function(group) {
           
           variable_table  %>%
-            pmap(function(var, val, varname, grp = group){
+            pmap(function(var, val, varname){
               
               varnamen <- paste0(varname, "_n")
               varnameN <- paste0(varname, "_N")
@@ -44,8 +44,7 @@ multi_year <- function(df_table, variable_table, groups_table, title, footnote =
                     !is.na(Total)
                   }
                 ) %>%
-                filter(!is.na(!!as.name(grp))) %>%
-                group_by(group1 = Year, group2 = !!as.name(grp)) %>%
+                group_by(group1 = Year, group2 = !!as.name(group)) %>%
                 summarise(!! varnamen := unweighted(sum(!!as.name(var) %in% !!val, na.rm = TRUE)),
                           !! varnameN := unweighted(sum(!is.na(!!as.name(var)), na.rm = TRUE)),
                           !! varnamepct := survey_ratio(!!as.name(var) %in% !!val, !is.na(!!as.name(var)), na.rm = TRUE, vartype = "ci", level = 0.95)
