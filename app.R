@@ -6,6 +6,8 @@ library(srvyr)
 library(readxl)
 library(gt)
 library(cyphr)
+library(openssl)
+library(keyring)
 
 
 source("./functions/loadData.R")
