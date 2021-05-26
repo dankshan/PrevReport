@@ -9,7 +9,11 @@ timeSeries <-
   filter(!is.na(var))
 
 
-saved_password <- cyphr::decrypt(readRDS(paste0(data_path, "password.rds")), cyphr::data_key(data_path))
+saved_password <- 
+  cyphr::decrypt(
+    readRDS(paste0(data_path, "password.rds")), 
+    cyphr::key_sodium(openssl::sha256(charToRaw(keyring::key_get("youth19_secret"))))
+  )
 
 load_survey <- function(df){
   
@@ -80,27 +84,97 @@ load_survey <- function(df){
 
 
 
-svy_2019_kura_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_regional_uncalibrated_incl_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2019_kura_uncalibrated <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2019_regional_uncalibrated_incl_wharekura.rds"
+    )
+  ),
+  key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2019_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2019_uncalibrated <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2019_regional_uncalibrated_no_wharekura.rds"
+    )
+  ),
+  key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2012_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2012_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2012_uncalibrated <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2012_regional_uncalibrated_no_wharekura.rds"
+    )
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2007_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2007_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2007_uncalibrated <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2007_regional_uncalibrated_no_wharekura.rds"
+    )
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2001_uncalibrated <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_regional_uncalibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2001_uncalibrated <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2001_regional_uncalibrated_no_wharekura.rds"
+    )
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
 
 
-svy_2019_kura <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_national_calibrated_incl_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2019_kura <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(
+      data_path,
+      "youth2019_national_calibrated_incl_wharekura.rds"
+    )
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2019 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2019_national_calibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2019 <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(data_path, "youth2019_national_calibrated_no_wharekura.rds")
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2012 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2012_national_calibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2012 <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(data_path, "youth2012_national_calibrated_no_wharekura.rds")
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2007 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2007_national_calibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2007 <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(data_path, "youth2007_national_calibrated_no_wharekura.rds")
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
-svy_2001 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_national_calibrated_no_wharekura.rds")), cyphr::data_key(data_path)))
+svy_2001 <-
+  load_survey(cyphr::decrypt(readRDS(
+    paste0(data_path, "youth2001_national_calibrated_no_wharekura.rds")
+  ), key_sodium(sha256(
+    charToRaw(key_get("youth19_secret"))
+  ))))
 
 
 
@@ -238,7 +312,9 @@ svy_2001 <- load_survey(cyphr::decrypt(readRDS(paste0(data_path, "youth2001_nati
 
 
 demographics <-
-  cyphr::decrypt(readRDS(paste0(data_path, "demographics.rds")), cyphr::data_key(data_path)) %>%
+  cyphr::decrypt(readRDS(paste0(data_path, "demographics.rds")), key_sodium(sha256(charToRaw(
+    key_get("youth19_secret")
+  )))) %>%
   mutate(Decile = fct_relevel(as.factor(Decile),
                               "1","2","3","4","5","6","7","8","9","10","99"),
          
