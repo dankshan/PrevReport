@@ -91,6 +91,7 @@ ui <-
                                                 h3("Select groups"),
                                                 choices = list("Total",
                                                                "Age",
+                                                               "Age_Band",
                                                                "Sex",
                                                                "Ethnicity",
                                                                "School_Year",
