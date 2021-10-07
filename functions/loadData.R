@@ -35,6 +35,7 @@ load_survey <- function(df){
                                                  sex == "Female" ~ "Female")),
                              "Male", "Female"),
            
+           
            Neighbourhood_Deprivation = fct_relevel(as.factor(case_when(NZDep_band3 == 1 ~ "Low",
                                                          NZDep_band3 == 2 ~ "Medium",
                                                          NZDep_band3 == 3 ~ "High",
@@ -59,6 +60,10 @@ load_survey <- function(df){
            Total = as.factor("Total"),
            
            Age = fct_relevel(as.factor(age), "13 and under", "14", "15", "16", "17 and over"),
+           
+           Age_Band = fct_relevel(as.factor(case_when(age %in% c("13 and under", "14", "15") ~ "Under 16",
+                                                      age %in% c("16", "17 and over") ~ "16 or over")),
+                                  "Under 16", "16 or over"),
            
            Attraction = fct_relevel(as.factor(case_when(attract_3Cat == 1 ~ "Opposite Sex",
                                                         attract_3Cat == 2 ~ "Same sex or both sexes",
