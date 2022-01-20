@@ -99,9 +99,10 @@ ui <-
                                                                "Neighbourhood_Deprivation",
                                                                "Urban_Rural",
                                                                "Region",
-                                                               "Attraction",
-                                                               "Trans",
-                                                               "Sex44"
+                                                               # "Attraction",
+                                                               # "Trans",
+                                                               # "Sex44",
+                                                               "Rainbow"
                                                 ), selected = list("Total",
                                                                    "Age",
                                                                    "Sex")),

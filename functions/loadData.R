@@ -85,6 +85,9 @@ load_survey <- function(df){
                                                    Sex44 == 90 ~ "No data available",
                                                    TRUE ~ NA_character_)),
                                "Yes", "No", "Unsure", "I don't understand", "No data available"),
+           
+           Rainbow = case_when(attract_3Cat == 2 | trans == 1 ~ "Rainbow",
+                               attract_3Cat == 1 | trans == 0 ~ "Cis-Hetero",)
     )
   
 }
